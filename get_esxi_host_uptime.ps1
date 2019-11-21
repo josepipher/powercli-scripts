@@ -1,0 +1,1 @@
+Get-VMHost | Select Name,@{N="Uptime (days)"; E={New-Timespan -Start $_.ExtensionData.Summary.Runtime.BootTime -End (Get-Date) | Select -ExpandProperty Days}} | ft -AutoSize
