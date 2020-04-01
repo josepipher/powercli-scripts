@@ -1,15 +1,17 @@
-Get-VMhost | Select Name,Parent,
+$host_memProvisioned_beforeHTML = Get-VMhost | Select Name,Parent,
                          @{N="Memory provisioned GB";E={$_ | Get-VM | %{($_.MemoryMB / 1KB) -as [int]} | Measure-Object -Sum | Select -ExpandProperty Sum }},
                          @{N="MemoryTotalGB";E={ [math]::Round($_.MemoryTotalGB,2) }},
                          @{N="Memory allocation %";E={ [math]::Round( ($_ | Get-VM | %{($_.MemoryMB / 1KB) -as [int]} | Measure-Object -Sum | Select -ExpandProperty Sum ) / $_.MemoryTotalGB * 100,2 ) }},
                          @{N="Memory Usage GB";E={ [math]::Round( $_.MemoryUsageGB ) }},
-                         @{N="Memory Usage %";E={ [math]::Round( ($_ | %{($_.MemoryUsageGB) -as [int]} | Measure-Object -Sum | Select -ExpandProperty Sum ) / $_.MemoryTotalGB * 100,2 ) }} | Sort-Object Parent | ft -auto
+                         @{N="Memory Usage %";E={ [math]::Round( ($_ | %{($_.MemoryUsageGB) -as [int]} | Measure-Object -Sum | Select -ExpandProperty Sum ) / $_.MemoryTotalGB * 100,2 ) }} | Sort-Object Parent
 
 $host_RAMProvisioned_exclMGMT = Get-VMhost | Select Name,@{N="Memory provisioned GB";E={$_ | Get-VM | %{($_.MemoryMB / 1KB) -as [int]} | Measure-Object -Sum | Select -ExpandProperty Sum }},
                          @{N="MemoryTotalGB";E={ [math]::Round($_.MemoryTotalGB,2) }},
                          @{N="Memory allocation %";E={ [math]::Round( ($_ | Get-VM | %{($_.MemoryMB / 1KB) -as [int]} | Measure-Object -Sum | Select -ExpandProperty Sum ) / $_.MemoryTotalGB * 100,2 ) }},
                          @{N="Memory Usage GB";E={ [math]::Round( $_.MemoryUsageGB ) }},
                          @{N="Memory Usage %";E={ [math]::Round( ($_ | %{($_.MemoryUsageGB) -as [int]} | Measure-Object -Sum | Select -ExpandProperty Sum ) / $_.MemoryTotalGB * 100,2 ) }}
+
+#$host_ramProvisioned_beforeHTML | ft -auto
 
 Write-Host ""
 Write-Host "Excluding MGMT Cluster :"
@@ -32,3 +34,5 @@ Write-Host "Actual RAM Used (GB) : " $actualRAMUsed
 
 $RAMUsedRatio = [math]::Round( $actualRAMUsed / $AvailableCapacity * 100, 2 )
 Write-Host "RAM used % : " $RAMUsedRatio
+
+return $host_memProvisioned_beforeHTML
