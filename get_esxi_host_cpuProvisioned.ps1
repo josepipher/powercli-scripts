@@ -1,12 +1,12 @@
 # Hypervisors ending in .20x have been excluded
 
-Get-VMhost | Select Name,Parent,
+$host_cpuProvisioned_beforeHTML = Get-VMhost | Select Name,Parent,
                          @{N="Provisioned CPU num";E={$_ | Get-VM | %{($_.NumCpu) -as [int]} | Measure-Object -Sum | Select -ExpandProperty Sum }},
                          @{N="Available CPU num";E={ [math]::Round($_.NumCpu,2) }},
                          @{N="CPU allocation %";E={ [math]::Round( ($_ | Get-VM | %{($_.NumCpu) -as [int]} | Measure-Object -Sum | Select -ExpandProperty Sum ) / $_.NumCpu * 100,2 ) }},
                          @{N="CPU Usage Mhz";E={ [math]::Round( $_.CpuUsageMhz ) }},
                          @{N="CPU Total Mhz";E={ [math]::Round( $_.CpuTotalMhz ) }},
-                         @{N="CPU Usage %";E={ [math]::Round( ($_ | %{($_.CpuUsageMhz) -as [int]} | Measure-Object -Sum | Select -ExpandProperty Sum ) / $_.CpuTotalMhz * 100,2 ) }} | Sort-Object Parent | ft -auto
+                         @{N="CPU Usage %";E={ [math]::Round( ($_ | %{($_.CpuUsageMhz) -as [int]} | Measure-Object -Sum | Select -ExpandProperty Sum ) / $_.CpuTotalMhz * 100,2 ) }} | Sort-Object Parent
 
 $host_cpuProvisioned_exclMGMT = Get-VMhost | where-object { $_.Name -NotLike "*.201" -and $_.Name -NotLike "*.202" -and $_.Name -NotLike "*.203" } | Select Name,
                          @{N="Provisioned CPU num";E={$_ | Get-VM | %{($_.NumCpu) -as [int]} | Measure-Object -Sum | Select -ExpandProperty Sum }},
@@ -15,6 +15,8 @@ $host_cpuProvisioned_exclMGMT = Get-VMhost | where-object { $_.Name -NotLike "*.
                          @{N="CPU Usage Mhz";E={ [math]::Round( $_.CpuUsageMhz ) }},
                          @{N="CPU Total Mhz";E={ [math]::Round( $_.CpuTotalMhz ) }},
                          @{N="CPU Usage %";E={ [math]::Round( ($_ | %{($_.CpuUsageMhz) -as [int]} | Measure-Object -Sum | Select -ExpandProperty Sum ) / $_.CpuTotalMhz * 100,2 ) }}
+
+#$host_cpuProvisioned_beforeHTML | ft -auto
 
 Write-Host ""
 Write-Host "Excluding MGMT Cluster :"
@@ -49,3 +51,5 @@ $totalVM = $vmNum_poweredOff + $vmNum_poweredOn
 Write-Host "Number of VMs (OFF) : " $vmNum_poweredOff
 Write-Host "Number of VMs (ON) : " $vmNum_poweredOn
 Write-Host "Total number of VMs : " $totalVM
+
+return $host_cpuProvisioned_beforeHTML
