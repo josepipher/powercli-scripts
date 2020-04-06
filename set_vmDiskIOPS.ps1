@@ -1,10 +1,20 @@
-###############################
-# Date : 20191118
-# Objective : set IO limit for VM
-#
-# Usage : .\set_vmDiskIOPS.ps1 vmName value-of-io-limit
-# Notes : value of IO limit is -1 for unlimited; other integers e.g. 100 otherwise
-###############################
+<#
+  .SYNOPSIS
+    Set IO limit for VM
+  .DESCRIPTION
+    Set IO limit for VM description
+    Value of IO limit is -1 for unlimited; other integers e.g. 100
+  .INPUTS
+    vmName
+    DiskLimitIOPerSecond
+  .NOTES
+    Version:  1.0
+    Author:   Josepipher
+    Date:     20191118
+    Purpose:  Set IO limit for VM
+  .EXAMPLE
+    .\set_vmDiskIOPS.ps1 vmName value-of-io-limit
+#>
 
 Function set_vmDiskIOPS ([string]$vmName, [int]$DiskLimitIOPerSecond){
   
